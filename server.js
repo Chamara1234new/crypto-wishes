@@ -212,6 +212,14 @@ app.post('/api/resonate', (req, res) => {
   }
 });
 
+// Admin: delete wishes by visitor ID
+app.delete('/api/admin/visitor/:visitorId', (req, res) => {
+  const vid = req.params.visitorId;
+  const deleted = db.prepare('DELETE FROM wishes WHERE visitor_id = ?').run(vid).changes;
+  db.prepare('DELETE FROM resonances WHERE visitor_id = ?').run(vid);
+  res.json({ deleted });
+});
+
 app.listen(PORT, () => {
   console.log(`Crypto Wishes running at http://localhost:${PORT}`);
 });
