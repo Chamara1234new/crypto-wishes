@@ -6,10 +6,14 @@ const OpenAI = require('openai');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// OpenAI client (lazy init — don't crash if key is missing at startup)
+let openai = null;
+function getOpenAI() {
+  if (!openai && process.env.OPENAI_API_KEY) {
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return openai;
+}
 
 // Database setup
 const db = new Database(path.join(__dirname, 'wishes.db'));
@@ -48,8 +52,11 @@ const VALID_CATEGORIES = [
 
 // AI-powered category detection via ChatGPT
 async function detectCategory(text) {
+  const client = getOpenAI();
+  if (!client) return keywordFallback(text);
+
   try {
-    const res = await openai.chat.completions.create({
+    const res = await client.chat.completions.create({
       model: 'gpt-4o-mini',
       max_tokens: 20,
       temperature: 0,
