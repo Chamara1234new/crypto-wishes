@@ -337,14 +337,14 @@ nudgeBtn.addEventListener('click', () => {
 //  Share — Rory's reframe
 // ============================================================
 function shareOnX(wishText) {
-  const text = `If crypto changed my life, I'd ${wishText}\n\nWhat would you wish for?`;
+  const text = `I got into crypto to ${wishText}. That hasn't changed.`;
   const url = window.location.origin;
   window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'width=550,height=420');
 }
 
 function shareAllWishes(myWishes) {
   const list = myWishes.map((w,i) => `${i+1}. ${w.text}`).join('\n');
-  const text = `My 3 crypto wishes:\n${list}\n\nWhat are yours?`;
+  const text = `My 3 reasons I got into crypto:\n${list}\n\nRemember yours?`;
   const url = window.location.origin;
   window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank', 'width=550,height=420');
 }
