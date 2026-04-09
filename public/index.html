@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Wishes</title>
+
+  <meta property="og:title" content="Crypto Wishes">
+  <meta property="og:description" content="Crypto granted you 3 wishes. What are they?">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Crypto Wishes">
+  <meta name="twitter:description" content="Crypto granted you 3 wishes. What are they?">
+  <meta name="theme-color" content="#06060f">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-glow bg-glow--1"></div>
+  <div class="bg-glow bg-glow--2"></div>
+
+  <header>
+    <h1>Crypto Wishes</h1>
+    <p class="subtitle">Crypto granted you <strong>3 wishes</strong>. What are they?</p>
+    <div id="stats-row" class="hidden"><span id="total-count">0</span> dreams rising</div>
+  </header>
+
+  <!-- Gate: shown until all 3 wishes are submitted -->
+  <div id="gate" class="hidden">
+    <div id="gate-preview"></div>
+    <div id="gate-content">
+      <p id="gate-message">Share your 3 wishes to see what others are dreaming</p>
+      <button id="gate-btn">Make your first wish</button>
+    </div>
+  </div>
+
+  <!-- Bubbles: hidden until gate is passed -->
+  <div id="bubbles-container" class="hidden">
+    <div id="bubbles-loading"><div class="loader"></div></div>
+  </div>
+
+  <!-- Origin story -->
+  <footer id="origin-story">
+    <p>This project exists to remind us what crypto was always about.</p>
+    <p class="footer-dim">No tokens. No fees. Just dreams.</p>
+  </footer>
+
+  <!-- Reciprocity nudge -->
+  <div id="reciprocity-nudge" class="hidden">
+    <span id="nudge-text"></span>
+    <button id="nudge-btn">Share yours</button>
+  </div>
+
+  <button id="add-wish-btn" class="pulse">Wish</button>
+
+  <!-- Submit modal -->
+  <div id="modal-overlay" class="hidden">
+    <div id="modal">
+      <button id="modal-close">&times;</button>
+
+      <!-- Form state -->
+      <div id="modal-form-state">
+        <h2 id="modal-prompt">What's your first wish?</h2>
+        <form id="wish-form">
+          <input type="text" id="wish-input" placeholder="to build a house for my family" maxlength="120" autocomplete="off" required>
+          <div class="input-meta">
+            <span class="char-count"><span id="char-current">0</span>/120</span>
+          </div>
+          <button type="submit" id="submit-btn">Send</button>
+        </form>
+        <p id="form-error" class="hidden"></p>
+      </div>
+
+      <!-- Success state -->
+      <div id="modal-success-state" class="hidden">
+        <div id="success-emoji"></div>
+        <p id="success-wish-text"></p>
+        <div class="success-actions">
+          <button id="share-x-btn" type="button">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Let the world know what you're dreaming about
+          </button>
+          <button id="another-wish-btn" type="button">Use next wish</button>
+        </div>
+        <p id="wishes-left-hint"></p>
+      </div>
+
+      <!-- Evangelist state -->
+      <div id="modal-evangelist-state" class="hidden">
+        <h2>Your wishes are rising</h2>
+        <p class="modal-sub">Watch them grow as others dream the same dreams.</p>
+        <div id="evangelist-wishes"></div>
+        <div class="success-actions">
+          <button id="evangelist-share-btn" type="button">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Let the world know what you're dreaming about
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail card -->
+  <div id="detail-overlay" class="hidden">
+    <div id="detail-card">
+      <div id="detail-color-bar"></div>
+      <button id="detail-close">&times;</button>
+      <div id="detail-icon-wrap"><span id="detail-icon"></span></div>
+      <p id="detail-text"></p>
+      <div id="detail-actions">
+        <button id="detail-resonate-btn" type="button">
+          <span id="resonate-icon">&#10084;&#65039;</span>
+          <span id="resonate-label">This resonates with me</span>
+        </button>
+        <button id="detail-share-btn" class="hidden" type="button">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Let the world know
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
