@@ -232,6 +232,17 @@ app.post('/api/admin/reclassify', async (req, res) => {
   res.json({ reclassified: results.length, results });
 });
 
+// Admin: seed a wish (bypasses IP/visitor limits)
+app.post('/api/admin/seed', async (req, res) => {
+  const { text, visitorId } = req.body;
+  if (!text) return res.status(400).json({ error: 'text required' });
+  const vid = visitorId || ('seed-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6));
+  const category = await detectCategory(text.trim());
+  db.prepare('INSERT INTO wishes (text, category, visitor_id, ip) VALUES (?, ?, ?, ?)')
+    .run(text.trim(), category, vid, 'seed');
+  res.json({ success: true, category, text: text.trim() });
+});
+
 // Admin: wipe all data
 app.delete('/api/admin/wipe-all', (req, res) => {
   const wishes = db.prepare('DELETE FROM wishes').run().changes;
