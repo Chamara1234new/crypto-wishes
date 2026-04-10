@@ -70,7 +70,7 @@ async function detectCategory(text) {
 
   try {
     const res = await client.chat.completions.create({
-      model: 'gpt-4o-mini',
+      model: 'gpt-4o',
       max_tokens: 20,
       temperature: 0,
       messages: [
