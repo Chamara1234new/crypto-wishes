@@ -74,7 +74,7 @@ async function detectCategory(text) {
       messages: [
         {
           role: 'system',
-          content: `You are a classifier. Given a person's wish/dream, reply with exactly ONE category key from this list:\n${VALID_CATEGORIES.join(', ')}\n\nCategory meanings:\n- house: home, property, real estate, building/buying a house\n- travel: traveling, exploring, vacations, visiting places\n- family: family, parents, kids, marriage, relationships\n- education: learning, school, degrees, courses, studying\n- business: starting a company, entrepreneurship, shops\n- car: vehicles, cars, motorcycles\n- health: medical, wellness, mental health, fitness goals\n- charity: giving back, donations, helping others, community\n- freedom: financial freedom, retiring early, quitting job, debt free, independence\n- technology: coding, software, gadgets, AI, tech projects\n- art: music, painting, writing, film, creative projects\n- invest: investing, stocks, crypto trading, building wealth\n- nature: farming, gardening, animals, outdoors, land\n- sports: athletics, gym, sports teams, marathons\n- food: restaurants, cooking, cafes, bakeries\n- gaming: video games, esports, game development, streaming\n- fashion: clothing, brands, jewelry, luxury, design\n- pet: dogs, cats, adopting pets, animal rescue\n\nReply with ONLY the category key, nothing else.`
+          content: `You classify people's wishes/dreams into categories. Reply with exactly ONE category key from this list:\n${VALID_CATEGORIES.join(', ')}\n\nCategory meanings:\n- house: home, apartment, flat, property, real estate, building/buying a house or flat, having a nice place to live\n- travel: traveling, exploring, seeing the world, vacations, visiting places\n- family: family, parents, kids, marriage, relationships, doing things for relatives\n- education: learning, school, degrees, courses, studying\n- business: starting a company, entrepreneurship, shops, building a team, growing a product, getting users, studios, ateliers\n- car: vehicles, cars, motorcycles\n- health: medical, wellness, mental health, fitness goals\n- charity: giving back, donations, helping others, community, raising money for causes, nonprofits, NGOs\n- freedom: ONLY for financial freedom, retiring early, quitting job, debt free, independence, earning a specific amount of money. Do NOT use this as a catch-all.\n- technology: coding, software, gadgets, AI, tech projects\n- art: music, painting, writing, film, creative projects, design studios\n- invest: investing, stocks, crypto trading, building generational wealth\n- nature: farming, gardening, animals, outdoors, land\n- sports: athletics, gym, sports teams, marathons\n- food: restaurants, cooking, cafes, bakeries\n- gaming: video games, esports, game development, streaming\n- fashion: clothing, brands, jewelry, luxury, style\n- pet: dogs, cats, adopting pets, animal rescue\n\nIMPORTANT: "freedom" is ONLY for financial independence wishes. If the wish is about a place to live (flat, apartment, house), use "house". If it's about a business/product/team, use "business". If it's about raising money for a cause, use "charity". When in doubt, pick the most specific category, NOT freedom.\n\nReply with ONLY the category key, nothing else.`
         },
         { role: 'user', content: text }
       ]
@@ -216,6 +216,18 @@ app.post('/api/resonate', (req, res) => {
   } catch(e) {
     res.json({ success: true, resonances: 0 });
   }
+});
+
+// Admin: reclassify all wishes with AI
+app.post('/api/admin/reclassify', async (req, res) => {
+  const rows = db.prepare('SELECT id, text FROM wishes').all();
+  const results = [];
+  for (const row of rows) {
+    const newCat = await detectCategory(row.text);
+    db.prepare('UPDATE wishes SET category = ? WHERE id = ?').run(newCat, row.id);
+    results.push({ text: row.text, category: newCat });
+  }
+  res.json({ reclassified: results.length, results });
 });
 
 // Admin: wipe all data
