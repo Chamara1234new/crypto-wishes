@@ -243,6 +243,14 @@ app.post('/api/admin/seed', async (req, res) => {
   res.json({ success: true, category, text: text.trim() });
 });
 
+// Admin: manually set category for a wish
+app.post('/api/admin/fix-category', (req, res) => {
+  const { text, category } = req.body;
+  if (!text || !category) return res.status(400).json({ error: 'text and category required' });
+  const result = db.prepare('UPDATE wishes SET category = ? WHERE LOWER(TRIM(text)) = LOWER(TRIM(?))').run(category, text);
+  res.json({ updated: result.changes, text, category });
+});
+
 // Admin: wipe all data
 app.delete('/api/admin/wipe-all', (req, res) => {
   const wishes = db.prepare('DELETE FROM wishes').run().changes;
