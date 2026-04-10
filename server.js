@@ -102,10 +102,33 @@ async function detectCategory(text) {
       ]
     });
 
-    const category = res.choices[0].message.content.trim().toLowerCase();
-    if (VALID_CATEGORIES.includes(category)) return category;
-    console.warn(`AI returned invalid category "${category}", falling back`);
-    return keywordFallback(text);
+    let category = res.choices[0].message.content.trim().toLowerCase();
+    if (!VALID_CATEGORIES.includes(category)) {
+      console.warn(`AI returned invalid category "${category}", falling back`);
+      return keywordFallback(text);
+    }
+
+    // Double-check: if AI said "freedom", re-ask with a challenge
+    if (category === 'freedom') {
+      try {
+        const check = await client.chat.completions.create({
+          model: 'gpt-4o',
+          max_tokens: 20,
+          temperature: 0,
+          messages: [
+            { role: 'system', content: `A wish was classified as "freedom" (financial independence). But "freedom" is overused. Is there a MORE SPECIFIC category that fits better?\n\nCategories: house (places to live, flats, apartments), family (relatives, loved ones, connections), business (teams, products, companies, studios, ateliers), charity (causes, helping others, making world better, NGOs), art (creative projects), invest (wealth building).\n\nIf "freedom" is truly the best fit (early retirement, earning money, debt-free, quitting job), reply: freedom\nOtherwise reply with the better category key. ONLY the key.` },
+            { role: 'user', content: `The wish is: "${text}"` }
+          ]
+        });
+        const revised = check.choices[0].message.content.trim().toLowerCase();
+        if (VALID_CATEGORIES.includes(revised) && revised !== category) {
+          console.log(`Reclassified "${text}": ${category} -> ${revised}`);
+          category = revised;
+        }
+      } catch(e) { /* keep original */ }
+    }
+
+    return category;
   } catch (err) {
     console.error('AI classification failed, using fallback:', err.message);
     return keywordFallback(text);
