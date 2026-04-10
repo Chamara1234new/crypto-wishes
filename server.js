@@ -76,8 +76,28 @@ async function detectCategory(text) {
       messages: [
         {
           role: 'system',
-          content: `You classify people's wishes/dreams into categories. Reply with exactly ONE category key from this list:\n${VALID_CATEGORIES.join(', ')}\n\nCategory meanings:\n- house: home, apartment, flat, property, real estate, building/buying a house or flat, having a nice place to live\n- travel: traveling, exploring, seeing the world, vacations, visiting places\n- family: family, parents, kids, marriage, relationships, doing things for relatives\n- education: learning, school, degrees, courses, studying\n- business: starting a company, entrepreneurship, shops, building a team, growing a product, getting users, studios, ateliers\n- car: vehicles, cars, motorcycles\n- health: medical, wellness, mental health, fitness goals\n- charity: giving back, donations, helping others, community, raising money for causes, nonprofits, NGOs\n- freedom: ONLY for financial freedom, retiring early, quitting job, debt free, independence, earning a specific amount of money. Do NOT use this as a catch-all.\n- technology: coding, software, gadgets, AI, tech projects\n- art: music, painting, writing, film, creative projects, design studios\n- invest: investing, stocks, crypto trading, building generational wealth\n- nature: farming, gardening, animals, outdoors, land\n- sports: athletics, gym, sports teams, marathons\n- food: restaurants, cooking, cafes, bakeries\n- gaming: video games, esports, game development, streaming\n- fashion: clothing, brands, jewelry, luxury, style\n- pet: dogs, cats, adopting pets, animal rescue\n\nIMPORTANT: "freedom" is ONLY for financial independence wishes. If the wish is about a place to live (flat, apartment, house), use "house". If it's about a business/product/team, use "business". If it's about raising money for a cause, use "charity". When in doubt, pick the most specific category, NOT freedom.\n\nReply with ONLY the category key, nothing else.`
+          content: `Classify wishes into ONE category. Reply with ONLY the key.\n\nCategories: ${VALID_CATEGORIES.join(', ')}\n\nRules:\n- house: any place to live — house, flat, apartment, villa, condo, balcony, penthouse\n- travel: seeing the world, exploring, visiting places\n- family: anything for family, parents, kids, relatives, connections with loved ones\n- education: learning, degrees, school\n- business: company, startup, team, product, users, studio, atelier, shop\n- car: vehicles\n- health: medical, wellness, mental health\n- charity: helping others, causes, NGOs, making the world better, volunteering, raising money for organizations\n- freedom: ONLY financial freedom, early retirement, earning X amount, quitting job, debt-free, independence\n- technology: coding, software, AI\n- art: music, painting, writing, film, creative work\n- invest: stocks, crypto trading, generational wealth, portfolio\n- nature: farming, land, outdoors, animals\n- sports: athletics, fitness, gym\n- food: restaurant, cafe, cooking, bakery\n- gaming: video games, esports\n- fashion: clothing, jewelry, luxury brands\n- pet: dogs, cats, animal rescue\n\nCRITICAL: Do NOT default to "freedom". Only use "freedom" for wishes explicitly about financial independence or earning money. For vague/abstract wishes, find the CLOSEST specific category.`
         },
+        { role: 'user', content: 'Pretty flat with a balcony' },
+        { role: 'assistant', content: 'house' },
+        { role: 'user', content: 'To raise money for Pelagos' },
+        { role: 'assistant', content: 'charity' },
+        { role: 'user', content: 'Fancy atelier for the girls' },
+        { role: 'assistant', content: 'business' },
+        { role: 'user', content: 'For Nabu to get millions of users' },
+        { role: 'assistant', content: 'business' },
+        { role: 'user', content: 'be able to give to my relatives' },
+        { role: 'assistant', content: 'family' },
+        { role: 'user', content: 'To build the best team and culture' },
+        { role: 'assistant', content: 'business' },
+        { role: 'user', content: 'make the world a better place' },
+        { role: 'assistant', content: 'charity' },
+        { role: 'user', content: 'Connection' },
+        { role: 'assistant', content: 'family' },
+        { role: 'user', content: 'get a degree in computer science' },
+        { role: 'assistant', content: 'education' },
+        { role: 'user', content: 'retire at 30' },
+        { role: 'assistant', content: 'freedom' },
         { role: 'user', content: text }
       ]
     });
