@@ -294,6 +294,14 @@ app.post('/api/admin/fix-category', (req, res) => {
   res.json({ updated: result.changes, text, category });
 });
 
+// Admin: delete a wish by text
+app.post('/api/admin/delete-wish', (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ error: 'text required' });
+  const deleted = db.prepare('DELETE FROM wishes WHERE LOWER(TRIM(text)) = LOWER(TRIM(?))').run(text).changes;
+  res.json({ deleted, text });
+});
+
 // Admin: wipe all data
 app.delete('/api/admin/wipe-all', (req, res) => {
   const wishes = db.prepare('DELETE FROM wishes').run().changes;
